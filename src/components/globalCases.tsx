@@ -3,13 +3,13 @@ import { StyleSheet, View, Text, Button } from 'react-native';
 import PieChart from 'react-native-pie-chart';
 
 interface GlobalCasesProps {
-  death: number,
+  deaths: number,
   recoveris: number,
   active: number,
 }
 
 export const GlobalCases = ({
-  death,
+  deaths,
   active,
   recoveris,
 }: GlobalCasesProps) => {
@@ -22,14 +22,14 @@ export const GlobalCases = ({
     )
   }
   const widthAndHeight = 160
-  const series = [death, recoveris, active]
+  const series = [deaths, recoveris, active]
   const sliceColor = ['#F44336','#2196F3','#4CAF50']
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Globally Cases</Text>
       <View style={styles.contentContainer}>
         <View style={styles.countryContainer}>
-          <CaseItem label="Death" color={'#F44336'} value={death}/>
+          <CaseItem label="Death" color={'#F44336'} value={deaths}/>
           <CaseItem label="Recoveries" color={'#2196F3'} value={recoveris}/>
           <CaseItem label="Active Case" color={'#4CAF50'} value={active}/>
         </View>
@@ -43,7 +43,7 @@ export const GlobalCases = ({
   );
 };
 GlobalCases.defaultProps = {
-  death: 110,
+  deaths: 110,
   recoveris: 50,
   active: 20
 }

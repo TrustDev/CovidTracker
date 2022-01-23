@@ -1,25 +1,28 @@
 import React from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
+import { CountryCaseModel } from '../model/covidModel';
 
 interface CountriesCardProps {
-  countries: string[]
+  countries: CountryCaseModel[] | null,
+  onClickMore: Function
 }
 
 export const CountriesCard = ({
   countries,
+  onClickMore
 }: CountriesCardProps) => {
 
   return (
     <View style={styles.container}>
       <View style={styles.countryContainer}>
-        {countries.map((item, index) => (
-          <View key={item} style={styles.countryItem}>
-            <Text style={styles.countryText}>{item}</Text>
-            <Text style={styles.caseText}>797</Text>
+        {countries && countries.map((item, index) => (
+          <View key={item.CountryISO} style={styles.countryItem}>
+            <Text style={styles.countryText}>{item.Country}</Text>
+            <Text style={styles.caseText}>{item.Total}</Text>
           </View>
         ))}
       </View>
-      <Button title="See more"></Button>
+      <Button title="See more" onPress={() => onClickMore()}></Button>
     </View>
   );
 };
