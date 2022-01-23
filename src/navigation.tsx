@@ -17,14 +17,22 @@ const Navigation = () => {
   const q = useQuery("summary", fetchSummaryAndCountryStats);
   const {setGlobalAndCountrySummary} = useSummaryStore();
   useEffect(() => {
-    if (q.isSuccess)
+    if (q.isSuccess && q.data)
       setGlobalAndCountrySummary(q.data as GlobalAndCountrySummary);
   }, [q.data]);
 
   const MainNavigator = () => (
     <Navigator>
-      <Screen name="Home" component={HomeScreen} />
-      <Screen name="CountryList" component={CountryListScreen} />
+      <Screen
+        name="Home"
+        component={HomeScreen}        
+        options={{headerTitle: "Home"}}
+      />
+      <Screen
+        name="CountryList"
+        component={CountryListScreen}        
+        options={{headerTitle: "Country List"}}
+      />
     </Navigator>
   );
 

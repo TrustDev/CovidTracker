@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, PureComponent, memo } from 'react';
 import { SafeAreaView, StyleSheet, View, Text, TextInput, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import RNPickerSelect from 'react-native-picker-select';
@@ -6,6 +6,10 @@ import { CountryCaseModel } from '../model/covidModel';
 import useSummaryStore from '../store/useSummary';
 
 interface CountryListProps {}
+interface RenderItemProps {
+  item: CountryCaseModel,
+  index: number
+}
 enum SortBy {
   DEFAULT = "Country",
   DEATHS = "Deaths",
@@ -13,40 +17,33 @@ enum SortBy {
   RECOVERD = "Recovered"
 }
 
+interface ListItemPros {
+  data: CountryCaseModel
+}
+class ListItem extends PureComponent<ListItemPros> {  
+  constructor(props: any) {
+      super(props);
+      this.state = {};
+  }
+  render() {
+    const props = this.props;
+    return (
+      <View style={styles.tableContainer}>
+        <Text style={styles.tableCountryCell}>{props.data.Country}</Text>
+        <Text style={styles.tableCell}>{props.data.Deaths}</Text>
+        <Text style={styles.tableCell}>{props.data.Active}</Text>
+        <Text style={styles.tableCell}>{props.data.Recovered}</Text>
+      </View>
+    )
+  }
+}
+const MemoListItem = memo(ListItem);
+
 export const CountryListScreen: React.FC<CountryListProps> = () => {
   const navigation = useNavigation();
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.DEFAULT);
   const [query, setQuery] = useState('');  
-  const countryCases = useSummaryStore(state => state.countryCases);  
-  const [caseData, setCaseData] = useState<CountryCaseModel[]>([{
-    Country: 'United States',
-    CountryISO: 'USA',
-    Deaths: 100,
-    Recovered: 50,
-    Active: 10,
-    Total: 10,
-  }, {
-    Country: 'United States',
-    CountryISO: 'USA',
-    Deaths: 100,
-    Recovered: 50,
-    Active: 10,
-    Total: 10,
-  }, {
-    Country: 'United KingDome',
-    CountryISO: 'USA',
-    Deaths: 110,
-    Recovered: 50,
-    Active: 20,
-    Total: 10,
-  }, {
-    Country: 'Canada',
-    CountryISO: 'USA',
-    Deaths: 34,
-    Recovered: 52,
-    Active: 11,
-    Total: 10,
-  }]);
+  const countryCases = useSummaryStore(state => state.countryCases);
   const filteredCases = useMemo(() => {
     const result = countryCases?.filter(item => item.Country.search(query) != -1).sort((a, b) => {
       if (sortBy == SortBy.DEFAULT)
@@ -55,14 +52,10 @@ export const CountryListScreen: React.FC<CountryListProps> = () => {
     });
     return result;
   }, [countryCases, sortBy, query])
-  const renderItem = (props :{item: CountryCaseModel}) => {
+  const memoizedRenderItem = useCallback(({item, index}: RenderItemProps)  => renderItem({item, index}), [filteredCases]);
+  const renderItem = (props : RenderItemProps) => {
     return (
-      <View style={styles.tableContainer}>
-        <Text style={styles.tableCountryCell}>{props.item.Country}</Text>
-        <Text style={styles.tableCell}>{props.item.Deaths}</Text>
-        <Text style={styles.tableCell}>{props.item.Active}</Text>
-        <Text style={styles.tableCell}>{props.item.Recovered}</Text>
-      </View>
+      <MemoListItem data={props.item}/>
     )
   }
   const renderHeader = () => {
@@ -109,10 +102,12 @@ export const CountryListScreen: React.FC<CountryListProps> = () => {
         </View>
       </View>
       <FlatList
-        keyExtractor={(item, index) => `${index}`}
-        renderItem={renderItem}
+        keyExtractor={(item, index) => item.CountryISO}
+        initialNumToRender={20}
+        renderItem={memoizedRenderItem}
         data={filteredCases}
         ListHeaderComponent={renderHeader}
+        stickyHeaderIndices={[0]}
       />
     </SafeAreaView>
   );
@@ -139,7 +134,9 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
     borderBottomColor: 'black',
     borderBottomWidth: 1,
-    color: 'black'
+    color: 'black',
+    backgroundColor: '#dadada',
+    marginTop: -5
   },
   input: {
     height: 40,
