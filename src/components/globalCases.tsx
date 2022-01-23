@@ -26,7 +26,7 @@ export const GlobalCases = ({
   const sliceColor = ['#F44336','#2196F3','#4CAF50']
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Globally Cases</Text>
+      <Text style={styles.label}>Global Cases</Text>
       <View style={styles.contentContainer}>
         <View style={styles.countryContainer}>
           <CaseItem label="Death" color={'#F44336'} value={deaths}/>
