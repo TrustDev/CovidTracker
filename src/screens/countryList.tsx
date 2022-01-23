@@ -2,19 +2,12 @@ import React, { useCallback, useMemo, useState, PureComponent, memo } from 'reac
 import { SafeAreaView, StyleSheet, View, Text, TextInput, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import RNPickerSelect from 'react-native-picker-select';
-import { CountryCaseModel } from '../model/covidModel';
+import { CountryCaseModel, CaseType } from '../model/covidModel';
 import useSummaryStore from '../store/useSummary';
 
-interface CountryListProps {}
 interface RenderItemProps {
   item: CountryCaseModel,
   index: number
-}
-enum SortBy {
-  DEFAULT = "Country",
-  DEATHS = "Deaths",
-  ACTIVE = "Active",
-  RECOVERD = "Recovered"
 }
 
 interface ListItemPros {
@@ -39,14 +32,15 @@ class ListItem extends PureComponent<ListItemPros> {
 }
 const MemoListItem = memo(ListItem);
 
+interface CountryListProps {}
+
 export const CountryListScreen: React.FC<CountryListProps> = () => {
-  const navigation = useNavigation();
-  const [sortBy, setSortBy] = useState<SortBy>(SortBy.DEFAULT);
+  const [sortBy, setSortBy] = useState<CaseType>(CaseType.DEFAULT);
   const [query, setQuery] = useState('');  
   const countryCases = useSummaryStore(state => state.countryCases);
   const filteredCases = useMemo(() => {
     const result = countryCases?.filter(item => item.Country.search(query) != -1).sort((a, b) => {
-      if (sortBy == SortBy.DEFAULT)
+      if (sortBy == CaseType.DEFAULT)
         return b[sortBy] > a[sortBy] ? -1 : 1;
       return b[sortBy] - a[sortBy];
     });
@@ -71,9 +65,9 @@ export const CountryListScreen: React.FC<CountryListProps> = () => {
   const onChangeFilter = (value: string) => {
     setQuery(value);    
   }
-  const onChangeSortby = (header: SortBy) => {
+  const onChangeSortby = (header: CaseType) => {
     if (!header)
-      setSortBy(SortBy.DEFAULT)
+      setSortBy(CaseType.DEFAULT)
     else
       setSortBy(header);
   }
@@ -94,9 +88,9 @@ export const CountryListScreen: React.FC<CountryListProps> = () => {
             }}
             onValueChange={onChangeSortby}
             items={[
-                { label: 'Deaths', value: SortBy.DEATHS },
-                { label: 'Active', value: SortBy.ACTIVE },
-                { label: 'Recovered', value: SortBy.RECOVERD },
+                { label: 'Deaths', value: CaseType.DEATHS },
+                { label: 'Active', value: CaseType.ACTIVE },
+                { label: 'Recovered', value: CaseType.RECOVERD },
             ]}
           />
         </View>

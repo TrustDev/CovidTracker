@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
 
-import { CustomTopNavigation } from '../components/topNavigation';
 import { useNavigation } from '@react-navigation/native';
 import { CountriesCard } from '../components/countriesCard';
 import { GlobalCases } from '../components/globalCases';
@@ -10,16 +9,12 @@ import useSummaryStore from '../store/useSummary';
 interface HomeProps {}
 
 export const HomeScreen: React.FC<HomeProps> = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation();  
   const globalSummary = useSummaryStore(state => state.globalSummary);
   const countryCases = useSummaryStore(state => state.countryCases);  
   const top5CountryCases = useMemo(() => {
     return countryCases?.sort((a, b) => b.Total - a.Total).slice(0, 4)??null;
   }, [countryCases]);
-  const getTop5Countires = () => {
-    if (countryCases == null)
-      return null
-  }
   const onSeeMore = () => {
     navigation.navigate("CountryList");
   }

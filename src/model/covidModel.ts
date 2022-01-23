@@ -11,7 +11,18 @@ export interface CountryCaseModel {
     Active: number,
     Total: number
 }
+export interface CountryModel {
+    CountryISO: string,
+    Country: string,    
+}
 export interface GlobalAndCountrySummary {
     global: GlobalSummaryModel,
     countryCases: CountryCaseModel[]
+}
+
+export enum CaseType {
+    DEFAULT = "Country",
+    DEATHS = "Deaths",
+    ACTIVE = "Active",
+    RECOVERD = "Recovered"
 }
